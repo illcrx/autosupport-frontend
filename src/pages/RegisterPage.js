@@ -1,31 +1,29 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-const LoginPage = () => {
+const RegisterPage = () => {
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:3000/auth/login', {
+      const response = await fetch('http://localhost:3000/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, email, password }),
       });
 
       if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('jwtToken', data.access_token);
-        console.log('Token set:', data.access_token); // Log to verify
-        window.dispatchEvent(new Event('authChange'));
-        navigate('/chats'); // Redirect to user profile or desired page
+        alert('Registration successful. Please log in.');
+        navigate('/login');
       } else {
-        alert('Invalid username or password');
+        alert('Registration failed. Please try again.');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -35,7 +33,7 @@ const LoginPage = () => {
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <form onSubmit={handleLogin}>
+      <form onSubmit={handleRegister}>
         <div>
           <label>
             Username:
@@ -44,17 +42,20 @@ const LoginPage = () => {
         </div>
         <div>
           <label>
+            Email:
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          </label>
+        </div>
+        <div>
+          <label>
             Password:
             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
           </label>
         </div>
-        <button type="submit">Login</button>
+        <button type="submit">Register</button>
       </form>
-      <div style={{ marginTop: '10px' }}>
-        <Link to="/register">Don't have an account? Register here</Link>
-      </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

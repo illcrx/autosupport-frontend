@@ -9,6 +9,7 @@ import UserProfile from './pages/UserProfile';
 import AdminPage from './pages/AdminPage';
 import ChatPage from './pages/ChatPage';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import Header from './components/Header';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
@@ -24,6 +25,7 @@ function App() {
         <Route path="/public3" element={<PublicPage3 />} />
         <Route path="/public4" element={<PublicPage4 />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route element={<ProtectedRoute />}>
           <Route path="/user-profile" element={<UserProfile />} />
           <Route path="/admin" element={<AdminPage />} />

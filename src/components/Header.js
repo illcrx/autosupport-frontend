@@ -35,7 +35,10 @@ const Header = () => {
             <button onClick={handleLogout} style={{ marginLeft: '10px' }}>Logout</button>
           </>
         ) : (
-          <Link to="/login" style={{ margin: '0 10px' }}>Login</Link>
+          <>
+            <Link to="/login" style={{ margin: '0 10px' }}>Login</Link>
+            <Link to="/register" style={{ margin: '0 10px' }}>Register</Link>
+          </>
         )}
       </nav>
     </header>
