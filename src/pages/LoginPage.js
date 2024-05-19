@@ -21,6 +21,8 @@ const LoginPage = () => {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('jwtToken', data.access_token);
+        console.log('Token set:', data.access_token); // Log to verify
+        window.dispatchEvent(new Event('authChange'));
         navigate('/chats'); // Redirect to user profile or desired page
       } else {
         alert('Invalid username or password');

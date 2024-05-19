@@ -1,12 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Header = () => {
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('jwtToken'));
+
+  useEffect(() => {
+    const handleAuthChange = () => {
+      setIsAuthenticated(!!localStorage.getItem('jwtToken'));
+    };
+
+    window.addEventListener('authChange', handleAuthChange);
+
+    return () => {
+      window.removeEventListener('authChange', handleAuthChange);
+    };
+  }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('jwtToken');
+    window.dispatchEvent(new Event('authChange'));
     navigate('/login');
   };
 
@@ -14,7 +27,7 @@ const Header = () => {
     <header style={{ padding: '10px', borderBottom: '1px solid #ccc' }}>
       <nav>
         <Link to="/" style={{ margin: '0 10px' }}>Home</Link>
-        {token ? (
+        {isAuthenticated ? (
           <>
             <Link to="/user-profile" style={{ margin: '0 10px' }}>User Profile</Link>
             <Link to="/admin" style={{ margin: '0 10px' }}>Admin</Link>
