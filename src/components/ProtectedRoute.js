@@ -1,10 +1,11 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 
-const ProtectedRoute = ({ component: Component, ...rest }) => {
-  const token = localStorage.getItem('token');
+const ProtectedRoute = () => {
+  const token = localStorage.getItem('jwtToken');
+  console.log('Token in ProtectedRoute:', token); // Log to verify
 
-  return token ? <Component {...rest} /> : <Navigate to="/login" />;
+  return token ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default ProtectedRoute;
