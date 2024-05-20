@@ -37,6 +37,13 @@ const ChatPage = () => {
   return (
     <div className="d-flex" style={{ height: '100vh', backgroundColor: '#f0f0f0', color: '#333' }}>
       <div className="col-2 p-3" style={{ backgroundColor: '#333', color: '#fff' }}>
+        <h2 className="text-center p-2">New Issue</h2>
+        <div className="d-flex flex-column">
+          <button className="btn btn-primary mb-2">Specific Product Service</button>
+          <button className="btn btn-primary mb-2">Overall Troubleshooting Help</button>
+          <button className="btn btn-primary mb-2">Setup Help</button>
+        </div>
+        <hr style={{ backgroundColor: '#fff' }} />
         <h2 className="text-center p-2">Requests</h2>
         {/* Placeholder for requests */}
       </div>
