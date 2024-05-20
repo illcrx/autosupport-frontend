@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import PublicPage1 from './pages/PublicPage1';
@@ -12,9 +12,25 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import Header from './components/Header';
 import ProtectedRoute from './components/ProtectedRoute';
+import socketService from './services/socketService';
 import './App.css';
 
 function App() {
+  useEffect(() => {
+    console.log('Connecting to WebSocket server on app mount...');
+    socketService.connect();
+
+    socketService.onReceiveMessage((message) => {
+      console.log('Message received:', message);
+      // Handle message reception globally if needed
+    });
+
+    return () => {
+      console.log('Disconnecting from WebSocket server on app unmount...');
+      socketService.disconnect();
+    };
+  }, []);
+
   return (
     <Router>
       <Header />
