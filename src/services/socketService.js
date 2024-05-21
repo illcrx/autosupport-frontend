@@ -5,6 +5,7 @@ class SocketService {
     this.socket = null;
   }
 
+  // Connect to the WebSocket server
   connect() {
     this.socket = io('http://localhost:3000', {
       transports: ['websocket'], // Ensures WebSocket transport is used
@@ -17,6 +18,7 @@ class SocketService {
     });
   }
 
+  // Disconnect from the WebSocket server
   disconnect() {
     if (this.socket) {
       this.socket.disconnect();
@@ -24,18 +26,22 @@ class SocketService {
     }
   }
 
-  sendMessage(message) {
+  // Send message to the WebSocket server
+  sendMessage(message, sessionId) {
     if (this.socket) {
-      console.log('Sending message:', message);
-      this.socket.emit('sendMessage', message); // Send message as a string
+      const sessionIDNumeric = sessionId ? parseInt(sessionId, 10) : null; // Ensure sessionId is numeric or null
+      const payload = { message, sessionId: sessionIDNumeric }; // Include sessionId in payload
+      console.log('Sending message:', payload);
+      this.socket.emit('sendMessage', payload);
     }
   }
 
+  // Register a callback to handle received messages
   onReceiveMessage(callback) {
     if (this.socket) {
-      this.socket.on('receiveMessage', (response) => {
-        console.log('Message received:', response);
-        callback(response);
+      this.socket.on('receiveMessage', (message) => {
+        console.log('Message received:', message);
+        callback(message);
       });
     }
   }

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import socketService from '../services/socketService';
 import { addMessage, setUserInput, clearUserInput } from '../store/chatSlice';
@@ -9,6 +9,7 @@ const ChatPage = () => {
   const userInput = useSelector((state) => state.chat.userInput);
   const chat = useSelector((state) => state.chat.messages);
   const dispatch = useDispatch();
+  const [currentSessionId, setCurrentSessionId] = useState(null);
 
   useEffect(() => {
     console.log('Connecting to WebSocket server...');
@@ -18,6 +19,15 @@ const ChatPage = () => {
       console.log('Dispatching received message:', response);
       dispatch(addMessage(response));
     });
+
+    // Assume the session ID is obtained from the server or another source
+    const fetchSessionId = async () => {
+      // Replace with actual session ID fetching logic
+      const sessionId = 'session123'; 
+      setCurrentSessionId(sessionId);
+    };
+
+    fetchSessionId();
 
     return () => {
       console.log('Disconnecting from WebSocket server...');
@@ -29,7 +39,7 @@ const ChatPage = () => {
     console.log('User input:', userInput);
     if (userInput.trim()) {
       console.log('Sending message:', userInput);
-      socketService.sendMessage(userInput);
+      socketService.sendMessage(userInput, currentSessionId);
       dispatch(addMessage({ content: userInput, sender: localStorage.getItem('username') || 'User' }));
       dispatch(clearUserInput());
     }
@@ -60,7 +70,7 @@ const ChatPage = () => {
             </div>
           ))}
         </div>
-        <div className="input-group mt-3">
+        <div className="input-group">
           <input
             type="text"
             className="form-control"
