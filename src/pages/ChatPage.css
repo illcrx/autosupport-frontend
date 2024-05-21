@@ -1,0 +1,98 @@
+.chat-container {
+    display: flex;
+    height: 100vh;
+    background-color: #f0f0f0;
+    color: #333;
+  }
+  
+  .sidebar {
+    width: 20%;
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+  }
+  
+  .sidebar h2 {
+    text-align: center;
+    padding: 10px;
+  }
+  
+  .new-issue-buttons {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+  }
+  
+  .new-issue-buttons button {
+    margin-bottom: 10px;
+  }
+  
+  .chat-main {
+    width: 60%;
+    background-color: #555;
+    color: #fff;
+    padding: 10px;
+  }
+  
+  .chat-main h2 {
+    text-align: center;
+    padding: 10px;
+  }
+  
+  .chat-window {
+    height: 80%;
+    overflow-y: auto;
+    padding: 10px;
+  }
+  
+  .message {
+    text-align: left;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .user-message {
+    background-color: #777;
+  }
+  
+  .chatgpt-message {
+    background-color: #444;
+  }
+  
+  .input-group {
+    margin-top: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+  
+  .photos-files {
+    width: 20%;
+    background-color: #444;
+    color: #fff;
+    padding: 10px;
+  }
+  
+  .photos-files h2 {
+    text-align: center;
+    padding: 10px;
+  }
+  
+  .form-control {
+    background-color: #444;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 12px 0 0 12px; /* Rounded corners for the left side */
+    height: 50px;
+    font-size: 16px;
+    padding: 10px;
+  }
+  
+  .input-group-append .btn {
+    background-color: #444;
+    color: #fff;
+    border: 1px solid #555;
+    border-left: 0;
+    border-radius: 0 12px 12px 0; /* Rounded corners for the right side */
+    height: 50px;
+  }

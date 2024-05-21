@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import './LoginPage.css'; // Ensure the CSS file is imported
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -21,7 +22,7 @@ const LoginPage = () => {
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('jwtToken', data.access_token);
-        console.log('Token set:', data.access_token); // Log to verify
+        console.log('Token set:', data.access_token);
         window.dispatchEvent(new Event('authChange'));
         navigate('/chats'); // Redirect to user profile or desired page
       } else {
@@ -34,24 +35,35 @@ const LoginPage = () => {
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      <form onSubmit={handleLogin}>
-        <div>
-          <label>
-            Username:
-            <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
-          </label>
+    <div className="login-container">
+      <div className="login-form">
+        <h2 className="login-header">Login</h2>
+        <form onSubmit={handleLogin}>
+          <div className="form-group mb-3">
+            <label>Username</label>
+            <input
+              type="text"
+              className="form-control"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+          <div className="form-group mb-3">
+            <label>Password</label>
+            <input
+              type="password"
+              className="form-control"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary w-100">Login</button>
+        </form>
+        <div className="mt-3 text-center">
+          <Link to="/register">Don't have an account? Register here</Link>
         </div>
-        <div>
-          <label>
-            Password:
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          </label>
-        </div>
-        <button type="submit">Login</button>
-      </form>
-      <div style={{ marginTop: '10px' }}>
-        <Link to="/register">Don't have an account? Register here</Link>
       </div>
     </div>
   );
