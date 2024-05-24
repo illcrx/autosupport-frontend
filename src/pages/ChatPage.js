@@ -9,37 +9,34 @@ const ChatPage = () => {
   const userInput = useSelector((state) => state.chat.userInput);
   const chat = useSelector((state) => state.chat.messages);
   const dispatch = useDispatch();
-  const [currentSessionId, setCurrentSessionId] = useState(null);
+  const [currentSessionId, setCurrentSessionId] = useState(localStorage.getItem('sessionId'));
 
   useEffect(() => {
     console.log('Connecting to WebSocket server...');
-    socketService.connect();
+    socketService.connect(currentSessionId);
 
     socketService.onReceiveMessage((response) => {
       console.log('Dispatching received message:', response);
       dispatch(addMessage(response));
     });
 
-    // Assume the session ID is obtained from the server or another source
-    const fetchSessionId = async () => {
-      // Replace with actual session ID fetching logic
-      const sessionId = 'session123'; 
-      setCurrentSessionId(sessionId);
-    };
-
-    fetchSessionId();
+    socketService.onSessionClosed((response) => {
+      console.log('Session closed:', response);
+      setCurrentSessionId(null);
+      localStorage.removeItem('sessionId');
+    });
 
     return () => {
       console.log('Disconnecting from WebSocket server...');
       socketService.disconnect();
     };
-  }, [dispatch]);
+  }, [dispatch, currentSessionId]);
 
   const handleSendMessage = () => {
     console.log('User input:', userInput);
     if (userInput.trim()) {
       console.log('Sending message:', userInput);
-      socketService.sendMessage(userInput, currentSessionId);
+      socketService.sendMessage(userInput);
       dispatch(addMessage({ content: userInput, sender: localStorage.getItem('username') || 'User' }));
       dispatch(clearUserInput());
     }

@@ -3,45 +3,76 @@ import { io } from 'socket.io-client';
 class SocketService {
   constructor() {
     this.socket = null;
+    this.sessionId = null;
   }
 
-  // Connect to the WebSocket server
-  connect() {
+  connect(sessionId) {
+    this.sessionId = sessionId;
     this.socket = io('http://localhost:3000', {
-      transports: ['websocket'], // Ensures WebSocket transport is used
+      transports: ['websocket'],
+      query: { sessionId }, // Pass the session ID as a query parameter
     });
     this.socket.on('connect', () => {
-      console.log('Connected to WebSocket server');
+      console.log('Connected to WebSocket server with session ID:', sessionId);
     });
     this.socket.on('disconnect', () => {
       console.log('Disconnected from WebSocket server');
     });
   }
 
-  // Disconnect from the WebSocket server
   disconnect() {
     if (this.socket) {
       this.socket.disconnect();
       console.log('Disconnected from WebSocket server');
+      this.sessionId = null;
     }
   }
 
-  // Send message to the WebSocket server
-  sendMessage(message, sessionId) {
+  sendMessage(message) {
     if (this.socket) {
-      const sessionIDNumeric = sessionId ? parseInt(sessionId, 10) : null; // Ensure sessionId is numeric or null
-      const payload = { message, sessionId: sessionIDNumeric }; // Include sessionId in payload
+      const payload = { message, sessionId: this.sessionId };
       console.log('Sending message:', payload);
       this.socket.emit('sendMessage', payload);
     }
   }
 
-  // Register a callback to handle received messages
+  getSessionMessages(sessionId) {
+    if (this.socket) {
+      console.log('Requesting messages for session:', sessionId);
+      this.socket.emit('getSessionMessages', sessionId);
+    }
+  }
+
+  closeSession(sessionId) {
+    if (this.socket) {
+      console.log('Closing session:', sessionId);
+      this.socket.emit('closeSession', sessionId);
+    }
+  }
+
   onReceiveMessage(callback) {
     if (this.socket) {
       this.socket.on('receiveMessage', (message) => {
         console.log('Message received:', message);
         callback(message);
+      });
+    }
+  }
+
+  onReceiveSessionMessages(callback) {
+    if (this.socket) {
+      this.socket.on('receiveSessionMessages', (response) => {
+        console.log('Session messages received:', response);
+        callback(response);
+      });
+    }
+  }
+
+  onSessionClosed(callback) {
+    if (this.socket) {
+      this.socket.on('sessionClosed', (response) => {
+        console.log('Session closed:', response);
+        callback(response);
       });
     }
   }

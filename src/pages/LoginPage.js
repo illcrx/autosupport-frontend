@@ -1,36 +1,43 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 import './LoginPage.css'; // Ensure the CSS file is imported
+import socketService from '../services/socketService';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:3000/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
+      const response = await axios.post('http://localhost:3000/auth/login', {
+        username,
+        password,
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem('jwtToken', data.access_token);
-        console.log('Token set:', data.access_token);
+      console.log('Response:', response); // Log the entire response for debugging
+
+      if (response.status === 201) {
+        const { access_token, sessionId } = response.data;
+        localStorage.setItem('jwtToken', access_token);
+        localStorage.setItem('sessionId', sessionId); // Store the session ID
+        console.log('Token and session ID set:', access_token, sessionId);
+
+        // Initialize the WebSocket connection with the session ID
+        socketService.connect(sessionId);
+
         window.dispatchEvent(new Event('authChange'));
         navigate('/chats'); // Redirect to user profile or desired page
       } else {
-        alert('Invalid username or password');
+        setError('Invalid username or password');
       }
     } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred. Please try again.');
+      console.error('Error during login:', error.response || error);
+      setError('An error occurred. Please try again.');
     }
   };
 
@@ -39,6 +46,7 @@ const LoginPage = () => {
       <div className="login-form">
         <h2 className="login-header">Login</h2>
         <form onSubmit={handleLogin}>
+          {error && <div className="alert alert-danger">{error}</div>}
           <div className="form-group mb-3">
             <label>Username</label>
             <input
