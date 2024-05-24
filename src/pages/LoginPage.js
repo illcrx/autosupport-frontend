@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import './LoginPage.css'; // Ensure the CSS file is imported
 import socketService from '../services/socketService';
+import './LoginPage.css';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -19,25 +19,36 @@ const LoginPage = () => {
         password,
       });
 
-      console.log('Response:', response); // Log the entire response for debugging
+      console.log('Response:', response);
 
       if (response.status === 201) {
         const { access_token, sessionId } = response.data;
-        localStorage.setItem('jwtToken', access_token);
-        localStorage.setItem('sessionId', sessionId); // Store the session ID
+        localStorage.setItem('access_token', access_token);
+        localStorage.setItem('sessionId', sessionId.toString());
         console.log('Token and session ID set:', access_token, sessionId);
 
         // Initialize the WebSocket connection with the session ID
-        socketService.connect(sessionId);
+        socketService.connect(sessionId.toString());
 
+        console.log('Dispatching authChange event');
         window.dispatchEvent(new Event('authChange'));
-        navigate('/chats'); // Redirect to user profile or desired page
+        navigate('/chats');
       } else {
         setError('Invalid username or password');
       }
     } catch (error) {
-      console.error('Error during login:', error.response || error);
-      setError('An error occurred. Please try again.');
+      if (error.response) {
+        console.error('Error data:', error.response.data);
+        console.error('Error status:', error.response.status);
+        console.error('Error headers:', error.response.headers);
+        setError(error.response.data.message || 'An error occurred. Please try again.');
+      } else if (error.request) {
+        console.error('Error request:', error.request);
+        setError('No response from the server. Please try again.');
+      } else {
+        console.error('Error message:', error.message);
+        setError('An error occurred. Please try again.');
+      }
     }
   };
 

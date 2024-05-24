@@ -29,10 +29,20 @@ class SocketService {
   }
 
   sendMessage(message) {
-    if (this.socket) {
-      const payload = { message, sessionId: this.sessionId };
+    const sessionId = localStorage.getItem('sessionId');
+    if (this.socket && sessionId) {
+      const payload = { message, sessionId };
       console.log('Sending message:', payload);
       this.socket.emit('sendMessage', payload);
+    }
+  }
+
+  onReceiveMessage(callback) {
+    if (this.socket) {
+      this.socket.on('receiveMessage', (message) => {
+        console.log('Message received:', message);
+        callback(message);
+      });
     }
   }
 
@@ -47,15 +57,6 @@ class SocketService {
     if (this.socket) {
       console.log('Closing session:', sessionId);
       this.socket.emit('closeSession', sessionId);
-    }
-  }
-
-  onReceiveMessage(callback) {
-    if (this.socket) {
-      this.socket.on('receiveMessage', (message) => {
-        console.log('Message received:', message);
-        callback(message);
-      });
     }
   }
 

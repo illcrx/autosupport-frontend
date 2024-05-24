@@ -1,26 +1,43 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import socketService from '../services/socketService';
 
 const Header = () => {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('jwtToken'));
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('access_token'));
 
   useEffect(() => {
     const handleAuthChange = () => {
-      setIsAuthenticated(!!localStorage.getItem('jwtToken'));
+      console.log('authChange event received');
+      setIsAuthenticated(!!localStorage.getItem('access_token'));
     };
 
+    console.log('Adding authChange event listener');
     window.addEventListener('authChange', handleAuthChange);
 
     return () => {
+      console.log('Removing authChange event listener');
       window.removeEventListener('authChange', handleAuthChange);
     };
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('jwtToken');
-    window.dispatchEvent(new Event('authChange'));
-    navigate('/login');
+  const handleLogout = async () => {
+    const accessToken = localStorage.getItem('access_token');
+    if (accessToken) {
+      await fetch('http://localhost:3000/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
+
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('sessionId');
+      socketService.disconnect();
+      console.log('Dispatching authChange event');
+      window.dispatchEvent(new Event('authChange'));
+      navigate('/login');
+    }
   };
 
   return (
