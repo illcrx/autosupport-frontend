@@ -18,11 +18,12 @@ const LoginPage = () => {
         username,
         password,
       });
-
+      console.log('user/pass', username, password)
       console.log('Response:', response);
 
       if (response.status === 201) {
         const { access_token, sessionId } = response.data;
+        console.log(response.data);
         localStorage.setItem('access_token', access_token);
         localStorage.setItem('sessionId', sessionId.toString());
         console.log('Token and session ID set:', access_token, sessionId);
